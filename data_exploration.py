@@ -3,6 +3,11 @@
 # [tool.databricks.environment]
 # environment_version = "6"
 # ///
+from pyspark.sql.functions import *
+from pyspark.sql.window import Window
+
+# COMMAND ----------
+
 spark.sql("show schemas in samples").display()
 
 # COMMAND ----------
@@ -343,6 +348,11 @@ df_shipmode_joined_order_customer.groupBy('c_custkey').agg(sum('revenue').alias(
 # COMMAND ----------
 
 df_shipmode_joined_order_customer.groupBy('c_custkey').agg(sum('revenue').alias('total_revenue'),count('*').alias('total_orders'),avg('revenue').alias('avg_revenue')).withColumn('cat', when(col('total_revenue') >= 5000000, 'High').when((col('total_revenue') >= 2500000) & (col('total_revenue') < 5000000), 'Medium').otherwise('Low')).orderBy('cat', Ascending = True).display()
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from samples.tpch.orders;
 
 # COMMAND ----------
 
