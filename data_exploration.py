@@ -352,7 +352,12 @@ df_shipmode_joined_order_customer.groupBy('c_custkey').agg(sum('revenue').alias(
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC select * from samples.tpch.orders;
+# MAGIC select o_custkey, year(o_orderdate) yd from samples.tpch.orders group by o_custkey, yd order by o_custkey;
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC select * from(select o_custkey,min(yd) over(partition by o_custkey) mi,
+# MAGIC max(yd) over( partition by o_custkey) ma, row_number() over (partition by o_custkey order by o_custkey) rown from 
+# MAGIC (select o_custkey, year(o_orderdate) yd from samples.tpch.orders group by o_custkey, yd order by o_custkey) ) where rown = 1 order by o_custkey
+# MAGIC
