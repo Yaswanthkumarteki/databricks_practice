@@ -356,8 +356,45 @@ df_shipmode_joined_order_customer.groupBy('c_custkey').agg(sum('revenue').alias(
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC ### **Task 25 - Customer retention**
+
+# COMMAND ----------
+
 # MAGIC %sql
 # MAGIC select * from(select o_custkey,min(yd) over(partition by o_custkey) mi,
 # MAGIC max(yd) over( partition by o_custkey) ma, row_number() over (partition by o_custkey order by o_custkey) rown from 
 # MAGIC (select o_custkey, year(o_orderdate) yd from samples.tpch.orders group by o_custkey, yd order by o_custkey) ) where rown = 1 order by o_custkey
 # MAGIC
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select * from samples.tpch.orders
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select o_custkey,max(year(o_orderdate)) ma, min(year(o_orderdate)) mi, ma-mi as diff
+# MAGIC from samples.tpch.orders
+# MAGIC group by o_custkey
+# MAGIC order by diff desc
+# MAGIC limit 10
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ### **Task 26 - Customer order frequency**
+
+# COMMAND ----------
+
+display(df_shipmode_joined_order_customer.limit(2))
+
+# COMMAND ----------
+
+df_shipmode_joined_order_customer.groupBy(["c_custkey","l_orderkey"]).agg(count("l_orderkey").alias("total_orders"), sum("revenue").alias("total_revenue"), avg("revenue").alias("average_revenue")).groupBy("c_custkey").agg(count("l_orderkey").alias("tota_orders"), sum("total_revenue").alias("tota_revenue")).orderBy(desc("tota_orders")).withColumn("rnk", row_number().over(Window.orderBy(desc("tota_orders")))).where("rnk <= 10").display()
+
+
+
+# COMMAND ----------
+
