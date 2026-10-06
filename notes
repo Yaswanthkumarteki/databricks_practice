@@ -1,0 +1,14 @@
+1.workflows / jobs
+    parameters can be passed at job level and task level
+
+    to pass at job level
+    1. During creation of job in ui you can pass the job parameters
+
+    to pass at task level
+    1. use dbutils.jobs.taskValues.set("pname","pvalue")
+    2. dbutils.notebook.exit()
+    3. dbutils.widgets.set()
+
+    to access
+    1. dbutils.widgets.get()
+    2.dbutils.jobs.taskValue.get("taskname","key")
