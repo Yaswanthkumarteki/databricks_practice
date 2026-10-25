@@ -398,3 +398,8 @@ df_shipmode_joined_order_customer.groupBy(["c_custkey","l_orderkey"]).agg(count(
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC show catalogs
+
+# COMMAND ----------
+
